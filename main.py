@@ -29,6 +29,15 @@ def registration():
         return "You registered sucessfully"
     return "You are already on the list"
 
+@app.route("/results", methods=['POST'])
+def results():
+    with open("file", "r") as f:
+        data = json.load(f)
+    var = ""
+    for key in sorted(data):
+        var += (key + ": " + ", ".join(data[key]) + "<br>")
+    return var
+
 if __name__ == "__main__":
     with open("file", "w") as f:
         f.write(json.dumps({x: [] for x in groups}))

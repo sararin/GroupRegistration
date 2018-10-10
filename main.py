@@ -1,9 +1,13 @@
 from flask import Flask, flash, redirect, render_template, request, url_for
 import json
 
+from datetime import datetime, timedelta
+
 import sys
 limit = sys.argv[1]
-groups = sys.argv[2:]
+groups = sys.argv[3:]
+times = datetime.strptime(sys.argv[2], "%H%M%S")
+delta = datetime.now() + timedelta(hours=times.hour, minutes=times.minute, seconds=times.second)
 
 app = Flask(__name__)
 app.config['limit'] = int(limit)
@@ -11,6 +15,9 @@ app.config['group'] = [{'group': x} for x in groups]
 
 @app.route('/')
 def index():
+    now = datetime.now()
+    if now < delta:
+        return str(delta - now)
     return render_template('index.html', group = app.config['group'])
 
 @app.route("/register", methods=['GET', 'POST'])

@@ -4,17 +4,17 @@ import json
 from datetime import datetime, timedelta
 
 import sys
-limit = sys.argv[1]
-groups = sys.argv[3:]
-times = datetime.strptime(sys.argv[2], "%H%M%S")
-delta = datetime.now() + timedelta(hours=times.hour, minutes=times.minute, seconds=times.second)
+limit = sys.argv[1]   #maximum amount of students per group
+groups = sys.argv[3:] #groups that will exist
+times = datetime.strptime(sys.argv[2], "%Hi:%M:%S") #gets in how many hours registration should start
+delta = datetime.now() + timedelta(hours=times.hour, minutes=times.minute, seconds=times.second) 
 
-app = Flask(__name__)
-app.config['limit'] = int(limit)
+app = Flask(__name__) #init of application, adds config, so both groups and limit will appear correctly
+app.config['limit'] = int(limit) 
 app.config['group'] = [{'group': x} for x in groups]
 
 @app.route('/')
-def index():
+def index(): #opens the access to website after certain period of time
     now = datetime.now()
     if now < delta:
         return str(delta - now)
@@ -29,7 +29,7 @@ def registration():
         data = json.load(f)
     if len(data[group]) >= limit:
         return "Limit reached"
-    if name not in data[group]:
+    if name not in data[group]: #part that checks if student already registered in that group
         data[group].append(name)
         with open("file", "w") as f:
             f.write(json.dumps(data))
@@ -40,12 +40,12 @@ def registration():
 def results():
     with open("file", "r") as f:
         data = json.load(f)
-    var = ""
+    var = "" #ugly and hacky way of showing the results of
     for key in sorted(data):
         var += (key + ": " + ", ".join(data[key]) + "<br>")
     return var
 
 if __name__ == "__main__":
-    with open("file", "w") as f:
+    with open("file", "w") as f: #create empty file with skeletal JSON
         f.write(json.dumps({x: [] for x in groups}))
     app.run()

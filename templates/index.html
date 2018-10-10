@@ -1,0 +1,9 @@
+<form method="POST" action="{{ url_for('registration') }}">
+  <input name="name_input">
+  <select name="group_select">
+    {% for o in group %}
+    <option value="{{ o.group }}">{{ o.group }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit">submit</button>
+</form>
